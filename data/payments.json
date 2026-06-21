@@ -1,0 +1,22 @@
+[
+  {
+    "id": "PAY-1781943713724",
+    "createdAt": "2026-06-20T08:21:53.724Z",
+    "bookingRef": "HLT-0002",
+    "amount": 200000,
+    "type": "deposit",
+    "status": "confirmed",
+    "confirmedAt": "2026-06-20T08:21:53.723Z",
+    "note": ""
+  },
+  {
+    "id": "PAY-1781943717314",
+    "createdAt": "2026-06-20T08:21:57.314Z",
+    "bookingRef": "HLT-0002",
+    "amount": 50000,
+    "type": "final",
+    "status": "confirmed",
+    "confirmedAt": "2026-06-20T08:21:57.313Z",
+    "note": ""
+  }
+]

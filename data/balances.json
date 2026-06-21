@@ -1,0 +1,14 @@
+[
+  {
+    "bookingRef": "HLT-0002",
+    "createdAt": "2026-06-20T08:21:50.127Z",
+    "totalAmount": 250000,
+    "depositAmount": 200000,
+    "finalAmount": 50000,
+    "balanceOwed": 0,
+    "status": "settled",
+    "depositPaid": 200000,
+    "dueOnDelivery": false,
+    "finalPaid": 50000
+  }
+]

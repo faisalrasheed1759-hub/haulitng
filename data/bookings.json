@@ -1,0 +1,36 @@
+[
+  {
+    "id": "BK-1781942538386",
+    "reference": "HLT-0001",
+    "status": "pending",
+    "trackingUrl": null,
+    "createdAt": "2026-06-20T08:02:18.386Z",
+    "name": "Test Customer",
+    "phone": "08012345678",
+    "serviceType": "haulage",
+    "pickup": "Port Harcourt",
+    "destination": "Lagos",
+    "equipment": "",
+    "weight": "",
+    "scheduledDate": ""
+  },
+  {
+    "id": "BK-1781943705971",
+    "reference": "HLT-0002",
+    "status": "completed",
+    "trackingUrl": null,
+    "createdAt": "2026-06-20T08:21:45.971Z",
+    "name": "Okafor Engineering",
+    "phone": "08099887766",
+    "serviceType": "haulage",
+    "pickup": "Port Harcourt",
+    "destination": "Lagos",
+    "equipment": "",
+    "weight": "15-30",
+    "scheduledDate": "",
+    "quoteAmount": 250000,
+    "depositAmount": 200000,
+    "finalAmount": 50000,
+    "paymentStatus": "paid_in_full"
+  }
+]
