@@ -2,8 +2,7 @@
 import { useState } from "react";
 import { getEquipmentItem } from "@/lib/equipment";
 import Link from "next/link";
-
-const categoryIcons = { excavator: "🚜", crane: "🏗️", "swamp-buggy": "🐊", dozer: "⛰️", grader: "🛣️", forklift: "🔧", trailer: "🚛" };
+import EquipmentImage from "@/components/EquipmentImage";
 
 const formatPrice = (p) => "₦" + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
@@ -31,12 +30,7 @@ export default function EquipmentDetail({ params }) {
       </div>
 
       <div style={{ background: "white", borderRadius: "12px", overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}>
-        <div style={{
-          height: "180px", background: "linear-gradient(135deg, #2c3e50, #34495e)",
-          display: "flex", alignItems: "center", justifyContent: "center", fontSize: "72px",
-        }}>
-          {categoryIcons[item.category] || "🔧"}
-        </div>
+        <EquipmentImage category={item.category} image={item.image} height={240} fontSize="96px" />
 
         <div style={{ padding: "24px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "16px", flexWrap: "wrap", gap: "12px" }}>

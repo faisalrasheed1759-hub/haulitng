@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚛</text></svg>" />
+        <link rel="icon" type="image/svg+xml" href="/logo.svg" />
       </head>
       <body style={{
         margin: 0,
@@ -39,7 +39,7 @@ export default function RootLayout({ children }) {
           textAlign: "center", padding: "20px", fontSize: "13px", color: "#888",
           background: "#1a1a2e", color: "#4a5568",
         }}>
-          <p style={{ margin: "4px 0" }}>🚛 HaulitNG — Port Harcourt • Onne • Nationwide</p>
+          <p style={{ margin: "4px 0" }}>HaulitNG — Port Harcourt • Onne • Nationwide</p>
           <p style={{ margin: "4px 0", fontSize: "12px" }}>Heavy equipment sales, leasing, and haulage logistics across Nigeria</p>
           <p style={{ margin: "4px 0", fontSize: "11px" }}>Contact: {config.phone} | {config.email}</p>
         </footer>

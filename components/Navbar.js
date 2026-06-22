@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Logo from "./Logo";
 
 const navStyle = {
   display: "flex", alignItems: "center", gap: "20px",
@@ -9,7 +10,6 @@ const navStyle = {
 };
 
 const navLink = { color: "#a0aec0", textDecoration: "none", fontSize: "14px", fontWeight: 500 };
-const logoStyle = { fontSize: "20px", fontWeight: 800, color: "white", textDecoration: "none", marginRight: "24px" };
 
 const links = [
   { href: "/equipment", label: "Equipment" },
@@ -34,7 +34,7 @@ export default function Navbar() {
 
   return (
     <nav style={navStyle}>
-      <a href="/" style={logoStyle}>🚛 HaulitNG</a>
+      <a href="/" style={{ color: "white", textDecoration: "none", marginRight: "24px" }}><Logo size={20} /></a>
       {isMobile ? (
         <>
           <div style={{ flex: 1 }} />

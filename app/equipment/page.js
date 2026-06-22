@@ -1,10 +1,6 @@
 import { getEquipment } from "@/lib/equipment";
 import Link from "next/link";
-
-const categoryIcons = {
-  excavator: "🚜", crane: "🏗️", "swamp-buggy": "🐊",
-  dozer: "⛰️", grader: "🛣️", forklift: "🔧", trailer: "🚛",
-};
+import EquipmentImage from "@/components/EquipmentImage";
 
 const categoryLabels = {
   excavator: "Excavators", crane: "Cranes", "swamp-buggy": "Swamp Buggies",
@@ -22,23 +18,23 @@ export default function EquipmentPage({ searchParams }) {
     <div style={{ padding: "24px", maxWidth: "1200px", margin: "0 auto" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: "22px" }}>🏗️ Heavy Equipment</h1>
+          <h1 style={{ margin: 0, fontSize: "22px" }}>Heavy Equipment</h1>
           <p style={{ margin: "4px 0 0", color: "#666", fontSize: "14px" }}>Buy • Lease • Transport nationwide | {all.length} units available</p>
         </div>
         <div style={{ display: "flex", gap: "8px" }}>
-          <a href="/dashboard" style={miniBtn}>📊 Fleet</a>
+          <a href="/dashboard" style={miniBtn}>Fleet</a>
           <a href="/" style={miniBtn}>Home</a>
         </div>
       </div>
 
       <div style={{ display: "flex", gap: "6px", marginBottom: "24px", flexWrap: "wrap" }}>
         <Link href="/equipment" style={!cat ? activeChip : chip} key="all">All ({all.length})</Link>
-        {Object.entries(categoryIcons).map(([key, icon]) => {
+        {Object.entries(categoryLabels).map(([key, label]) => {
           const count = all.filter((e) => e.category === key).length;
           return (
             <Link key={key} href={`/equipment?category=${key}`}
               style={cat === key ? activeChip : chip}>
-              {icon} {categoryLabels[key]} ({count})
+              {label} ({count})
             </Link>
           );
         })}
@@ -51,12 +47,7 @@ export default function EquipmentPage({ searchParams }) {
               background: "white", borderRadius: "12px", overflow: "hidden",
               boxShadow: "0 1px 3px rgba(0,0,0,0.1)", transition: "box-shadow 0.2s", cursor: "pointer",
             }}>
-              <div style={{
-                height: "120px", background: "#2c3e50",
-                display: "flex", alignItems: "center", justifyContent: "center", fontSize: "48px",
-              }}>
-                {categoryIcons[item.category] || "🔧"}
-              </div>
+              <EquipmentImage category={item.category} image={item.image} height={120} fontSize="48px" />
               <div style={{ padding: "14px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "6px" }}>
                   <div>
