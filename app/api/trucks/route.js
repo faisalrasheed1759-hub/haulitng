@@ -1,6 +1,9 @@
 import { getTrucks } from "@/lib/store";
+import { requireAdmin } from "@/lib/api-auth";
 
 export async function GET() {
+  const authorized = await requireAdmin();
+  if (!authorized) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const trucks = getTrucks();
   return Response.json({ trucks, timestamp: new Date().toISOString() });
 }

@@ -40,6 +40,9 @@ export async function POST(req) {
 }
 
 export async function GET(req) {
+  const { auth } = await import("@/lib/auth");
+  const session = await auth();
+  if (!session?.user) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const { searchParams } = new URL(req.url);
   const ref = searchParams.get("ref");
   if (ref) {

@@ -1,6 +1,9 @@
 import { getTrips } from "@/lib/store";
+import { requireAdmin } from "@/lib/api-auth";
 
 export async function GET(request) {
+  const authorized = await requireAdmin();
+  if (!authorized) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const { searchParams } = new URL(request.url);
   const customer = searchParams.get("customer");
   const allTrips = getTrips();
@@ -14,6 +17,8 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
+  const authorized = await requireAdmin();
+  if (!authorized) return Response.json({ error: "Unauthorized" }, { status: 401 });
   try {
     const body = await request.json();
     const { truckId, customerName, destination, estimatedDelivery } = body;

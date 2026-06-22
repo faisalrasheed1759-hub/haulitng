@@ -1,4 +1,4 @@
-import { addInquiry } from "@/lib/equipment";
+import { addInquiry } from "@/lib/inquiries";
 
 export async function POST(request) {
   try {

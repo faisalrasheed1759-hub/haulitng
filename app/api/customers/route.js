@@ -1,5 +1,8 @@
 export async function POST(request) {
   try {
+    const { auth } = await import("@/lib/auth");
+    const session = await auth();
+    if (!session?.user) return Response.json({ error: "Unauthorized" }, { status: 401 });
     const body = await request.json();
     const { name, phone, address } = body;
     if (!name || !phone) {

@@ -47,7 +47,7 @@ export default function ChatWidget() {
           return newMsgs.length > 0 ? [...prev, ...newMsgs] : prev;
         });
       }
-    } catch {}
+    } catch (e) { console.error("Chat fetch error:", e); }
   }, [sessionId, messages]);
 
   useEffect(() => {
@@ -82,7 +82,7 @@ export default function ChatWidget() {
         localStorage.setItem("haulitng_chat_name", n);
         setName(n);
       }
-    } catch {}
+    } catch (e) { console.error("Chat send error:", e); }
     setLoading(false);
   };
 

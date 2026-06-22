@@ -1,6 +1,9 @@
 import { getBooking, updateBooking, addPayment, getPaymentsByBooking, updateBalance, getBalance } from "@/lib/db";
+import { requireAdmin } from "@/lib/api-auth";
 
 export async function POST(req) {
+  const authorized = await requireAdmin();
+  if (!authorized) return Response.json({ error: "Unauthorized" }, { status: 401 });
   try {
     const data = await req.json();
     const { action, bookingRef } = data;
@@ -105,6 +108,8 @@ export async function POST(req) {
 }
 
 export async function GET(req) {
+  const authorized = await requireAdmin();
+  if (!authorized) return Response.json({ error: "Unauthorized" }, { status: 401 });
   try {
     const { searchParams } = new URL(req.url);
     const ref = searchParams.get("ref");

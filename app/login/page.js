@@ -1,12 +1,14 @@
 "use client";
+import { Suspense } from "react";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const callbackUrl = params.get("callbackUrl") || "/admin/payments";
+  const raw = params.get("callbackUrl") || "/admin/payments";
+  const callbackUrl = raw.startsWith("/") ? raw : "/admin/payments";
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -68,10 +70,19 @@ export default function LoginPage() {
             {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
-        <p style={{ textAlign: "center", marginTop: "16px", fontSize: "12px", color: "#888" }}>
-          Default: admin / haulitng2026
-        </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#1a1a2e", color: "white" }}>
+        <div>Loading...</div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }
