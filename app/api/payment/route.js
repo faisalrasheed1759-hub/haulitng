@@ -75,6 +75,9 @@ export async function POST(req) {
           dueOnDelivery: true,
           status: "awaiting_final",
         });
+        import("@/lib/notifications").then(({ notifyDepositConfirmed }) => {
+          notifyDepositConfirmed(getBooking(bookingRef), payment);
+        });
       } else if (type === "final") {
         updateBooking(bookingRef, { paymentStatus: "paid_in_full", status: "completed" });
         updateBalance(bookingRef, {
@@ -82,6 +85,9 @@ export async function POST(req) {
           balanceOwed: 0,
           dueOnDelivery: false,
           status: "settled",
+        });
+        import("@/lib/notifications").then(({ notifyFinalConfirmed }) => {
+          notifyFinalConfirmed(getBooking(bookingRef), payment);
         });
       }
 
@@ -97,6 +103,9 @@ export async function POST(req) {
       const final = quoteAmount - deposit;
       updateBooking(bookingRef, { quoteAmount, depositAmount: deposit, finalAmount: final, paymentStatus: "quoted" });
       updateBalance(bookingRef, { totalAmount: quoteAmount, depositAmount: deposit, finalAmount: final, balanceOwed: final, status: "quoted" });
+      import("@/lib/notifications").then(({ notifyQuoteSet }) => {
+        notifyQuoteSet(getBooking(bookingRef));
+      });
       return Response.json({ booking: getBooking(bookingRef) });
     }
 

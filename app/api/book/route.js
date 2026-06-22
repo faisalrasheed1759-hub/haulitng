@@ -36,6 +36,11 @@ export async function POST(req) {
     scheduledDate: data.date || "",
   });
 
+  const { notifyBookingCreated } = await import("@/lib/notifications");
+  notifyBookingCreated(booking).then((result) => {
+    console.log("Booking notifications sent:", result?.customerWhatsApp);
+  }).catch((e) => console.error("Booking notification failed:", e));
+
   return Response.json({ booking, type: "booking" });
 }
 
