@@ -12,7 +12,7 @@ export async function POST(request) {
     const autoReply = visitor ? addAutoReply(sessionId) : null;
     return Response.json({ message: msg, autoReply }, { status: 201 });
   } catch (e) {
-    return Response.json({ error: e.message }, { status: 500 });
+    console.error(e); return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 

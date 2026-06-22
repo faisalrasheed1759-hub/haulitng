@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { config } from "@/lib/config";
 
 export default function BookPage() {
   const [step, setStep] = useState(1);
@@ -18,11 +19,23 @@ export default function BookPage() {
   });
   const [submitted, setSubmitted] = useState(null);
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState(null);
+  const [touched, setTouched] = useState({});
 
   const update = (field, val) => setForm((f) => ({ ...f, [field]: val }));
 
+  const blur = (field) => setTouched((t) => ({ ...t, [field]: true }));
+
+  const step1Required = ["name", "phone", "serviceType"];
+  const isHaulage = form.serviceType === "haulage" || form.serviceType === "both" || form.serviceType === "other";
+  const step2Required = isHaulage ? ["pickup", "destination"] : ["equipmentType"];
+
+  const validateStep1 = () => step1Required.every((f) => form[f]);
+  const validateStep2 = () => step2Required.every((f) => form[f]);
+
   const submit = async () => {
     setSending(true);
+    setError(null);
     try {
       const res = await fetch("/api/book", {
         method: "POST",
@@ -30,8 +43,11 @@ export default function BookPage() {
         body: JSON.stringify(form),
       });
       const data = await res.json();
+      if (!data.booking) { setError("Server error. Please try again."); setSending(false); return; }
       setSubmitted(data.booking);
-    } catch {}
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    }
     setSending(false);
   };
 
@@ -99,10 +115,12 @@ export default function BookPage() {
         {step === 1 && (
           <div style={{ display: "grid", gap: "16px" }}>
             <h3 style={{ margin: 0 }}>Your Details</h3>
-            <input placeholder="Full name *" value={form.name} onChange={(e) => update("name", e.target.value)} style={input} />
-            <input placeholder="Phone number *" value={form.phone} onChange={(e) => update("phone", e.target.value)} style={input} />
+            <input placeholder="Full name *" value={form.name} onBlur={() => blur("name")} onChange={(e) => update("name", e.target.value)} style={{ ...input, borderColor: touched.name && !form.name ? "#e74c3c" : "#ddd" }} />
+            {touched.name && !form.name && <span style={{ color: "#e74c3c", fontSize: "12px" }}>Full name is required</span>}
+            <input placeholder="Phone number *" value={form.phone} onBlur={() => blur("phone")} onChange={(e) => update("phone", e.target.value)} style={{ ...input, borderColor: touched.phone && !form.phone ? "#e74c3c" : "#ddd" }} />
+            {touched.phone && !form.phone && <span style={{ color: "#e74c3c", fontSize: "12px" }}>Phone number is required</span>}
             <input placeholder="Email (optional)" value={form.email} onChange={(e) => update("email", e.target.value)} style={input} />
-            <select value={form.serviceType} onChange={(e) => update("serviceType", e.target.value)} style={input}>
+            <select value={form.serviceType} onBlur={() => blur("serviceType")} onChange={(e) => update("serviceType", e.target.value)} style={{ ...input, borderColor: touched.serviceType && !form.serviceType ? "#e74c3c" : "#ddd" }}>
               <option value="">What do you need? *</option>
               <option value="haulage">Heavy equipment haulage (lowbed/trailer)</option>
               <option value="buy">Buy equipment</option>
@@ -111,7 +129,7 @@ export default function BookPage() {
               <option value="other">Other logistics</option>
             </select>
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <button onClick={() => { if (form.name && form.phone && form.serviceType) setStep(2); else alert("Fill required fields"); }} style={btnStyle}>Next →</button>
+              <button onClick={() => { const all = ["name", "phone", "serviceType"]; all.forEach((f) => blur(f)); if (validateStep1()) setStep(2); }} style={btnStyle}>Next →</button>
             </div>
           </div>
         )}
@@ -119,10 +137,12 @@ export default function BookPage() {
         {step === 2 && (
           <div style={{ display: "grid", gap: "16px" }}>
             <h3 style={{ margin: 0 }}>Service Details</h3>
-            {form.serviceType === "haulage" || form.serviceType === "both" || form.serviceType === "other" ? (
+            {isHaulage ? (
               <>
-                <input placeholder="Pickup location *" value={form.pickup} onChange={(e) => update("pickup", e.target.value)} style={input} />
-                <input placeholder="Destination *" value={form.destination} onChange={(e) => update("destination", e.target.value)} style={input} />
+                <input placeholder="Pickup location *" value={form.pickup} onBlur={() => blur("pickup")} onChange={(e) => update("pickup", e.target.value)} style={{ ...input, borderColor: touched.pickup && !form.pickup ? "#e74c3c" : "#ddd" }} />
+                {touched.pickup && !form.pickup && <span style={{ color: "#e74c3c", fontSize: "12px" }}>Pickup location is required</span>}
+                <input placeholder="Destination *" value={form.destination} onBlur={() => blur("destination")} onChange={(e) => update("destination", e.target.value)} style={{ ...input, borderColor: touched.destination && !form.destination ? "#e74c3c" : "#ddd" }} />
+                {touched.destination && !form.destination && <span style={{ color: "#e74c3c", fontSize: "12px" }}>Destination is required</span>}
                 <select value={form.weight} onChange={(e) => update("weight", e.target.value)} style={input}>
                   <option value="">Estimated weight</option>
                   <option value="<5">Under 5 tons</option>
@@ -137,7 +157,7 @@ export default function BookPage() {
               </>
             ) : (
               <>
-                <select value={form.equipmentType} onChange={(e) => update("equipmentType", e.target.value)} style={input}>
+                <select value={form.equipmentType} onBlur={() => blur("equipmentType")} onChange={(e) => update("equipmentType", e.target.value)} style={{ ...input, borderColor: touched.equipmentType && !form.equipmentType ? "#e74c3c" : "#ddd" }}>
                   <option value="">Equipment interested in *</option>
                   <option value="excavator">Excavator</option>
                   <option value="crane">Crane</option>
@@ -148,13 +168,15 @@ export default function BookPage() {
                   <option value="trailer">Lowbed Trailer</option>
                   <option value="other">Other</option>
                 </select>
+                {touched.equipmentType && !form.equipmentType && <span style={{ color: "#e74c3c", fontSize: "12px" }}>Equipment type is required</span>}
                 <input placeholder="Location for delivery" value={form.destination} onChange={(e) => update("destination", e.target.value)} style={input} />
               </>
             )}
             <textarea placeholder="Additional details or special requirements" value={form.message} onChange={(e) => update("message", e.target.value)} rows="3" style={{ ...input, resize: "vertical" }} />
+            {error && <div style={{ background: "#fef2f2", color: "#b91c1c", padding: "10px 16px", borderRadius: "8px", fontSize: "13px" }}>{error}</div>}
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <button onClick={() => setStep(1)} style={{ ...btnStyle, background: "#95a5a6" }}>← Back</button>
-              <button onClick={submit} disabled={sending} style={{ ...btnStyle, opacity: sending ? 0.7 : 1 }}>
+              <button onClick={() => { step2Required.forEach((f) => blur(f)); if (validateStep2()) submit(); }} disabled={sending} style={{ ...btnStyle, opacity: sending ? 0.7 : 1 }}>
                 {sending ? "Submitting..." : "Submit Request"}
               </button>
             </div>
@@ -163,7 +185,7 @@ export default function BookPage() {
       </div>
 
       <div style={{ marginTop: "24px", padding: "16px", background: "#eef2ff", borderRadius: "8px", fontSize: "13px", color: "#555" }}>
-        <strong>Need faster service?</strong> Call or WhatsApp <strong>0912 076 4728</strong> for immediate assistance.
+        <strong>Need faster service?</strong> Call or WhatsApp <strong>{config.phone}</strong> for immediate assistance.
       </div>
     </div>
   );

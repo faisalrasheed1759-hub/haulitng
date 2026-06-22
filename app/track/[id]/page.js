@@ -3,30 +3,38 @@ import React from "react";
 import { useParams } from "next/navigation";
 
 async function getTripData(tripId) {
+  let hasError = false;
   try {
     const res = await fetch(`/api/trips`);
+    if (!res.ok) throw new Error("fetch failed");
     const data = await res.json();
     const trip = data.trips.find((t) => t.id === tripId.toUpperCase());
-    if (trip) return trip;
-  } catch {}
+    if (trip) return { trip, error: null };
+  } catch {
+    hasError = true;
+  }
   try {
     const res = await fetch(`/api/book?ref=${tripId.toUpperCase()}`);
     if (res.ok) {
       const data = await res.json();
-      return { ...data.booking, id: data.booking.reference, isBooking: true };
+      if (data.booking) return { trip: { ...data.booking, id: data.booking.reference, isBooking: true }, error: null };
     }
-  } catch {}
-  return null;
+  } catch {
+    hasError = true;
+  }
+  return { trip: null, error: hasError ? "server_error" : "not_found" };
 }
 
 export default function TrackPage({ params }) {
   const [trip, setTrip] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
+  const [fetchError, setFetchError] = React.useState(null);
 
   React.useEffect(() => {
     params.then((p) => {
-      getTripData(p.id).then((data) => {
-        setTrip(data);
+      getTripData(p.id).then((result) => {
+        setTrip(result.trip);
+        if (result.error) setFetchError(result.error);
         setLoading(false);
       });
     });
@@ -44,9 +52,19 @@ export default function TrackPage({ params }) {
     return (
       <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f5f5f5" }}>
         <div style={{ textAlign: "center", padding: "40px" }}>
-          <div style={{ fontSize: "64px", marginBottom: "16px" }}>🔍</div>
-          <h2>No tracking data found</h2>
-          <p style={{ color: "#666" }}>Trip ID not found. Contact HaulitNG support.</p>
+          {fetchError === "server_error" ? (
+            <>
+              <div style={{ fontSize: "64px", marginBottom: "16px" }}>⚠️</div>
+              <h2>Server error</h2>
+              <p style={{ color: "#666" }}>Could not load tracking data. Please try again later.</p>
+            </>
+          ) : (
+            <>
+              <div style={{ fontSize: "64px", marginBottom: "16px" }}>🔍</div>
+              <h2>No tracking data found</h2>
+              <p style={{ color: "#666" }}>Trip ID not found. Contact HaulitNG support.</p>
+            </>
+          )}
         </div>
       </div>
     );
@@ -87,7 +105,7 @@ export default function TrackPage({ params }) {
             <h3 style={{ margin: "0 0 16px" }}>📍 Last Location Update</h3>
             <div style={{ fontSize: "14px", lineHeight: "1.8" }}>
               <div><strong>Time:</strong> {new Date(lastCheckin.timestamp).toLocaleString()}</div>
-              <div><strong>Coordinates:</strong> {lastCheckin.lat?.toFixed(4)}, {lastCheckin.lng?.toFixed(4)}</div>
+              <div><strong>Coordinates:</strong> <a href={`https://www.google.com/maps?q=${lastCheckin.lat},${lastCheckin.lng}`} target="_blank" rel="noopener noreferrer" style={{ color: "#2563eb", textDecoration: "underline" }}>{lastCheckin.lat?.toFixed(4)}, {lastCheckin.lng?.toFixed(4)}</a></div>
               {lastCheckin.note && <div><strong>Note:</strong> {lastCheckin.note}</div>}
             </div>
           </div>
@@ -104,7 +122,7 @@ export default function TrackPage({ params }) {
                   lineHeight: "1.6",
                 }}>
                   <span style={{ color: "#2c3e50", fontWeight: 600 }}>{new Date(c.timestamp).toLocaleTimeString()}</span>
-                  {" — "}{c.lat?.toFixed(4)}, {c.lng?.toFixed(4)}
+                  {" — "}<a href={`https://www.google.com/maps?q=${c.lat},${c.lng}`} target="_blank" rel="noopener noreferrer" style={{ color: "#2563eb", textDecoration: "underline" }}>{c.lat?.toFixed(4)}, {c.lng?.toFixed(4)}</a>
                   {c.note && <span style={{ color: "#666" }}> — {c.note}</span>}
                 </div>
               ))}

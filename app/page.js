@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { readFileSync, existsSync } from "fs";
 import path from "path";
+import { config } from "@/lib/config";
 
 function getStats() {
   try {
@@ -36,7 +37,7 @@ export default function HomePage() {
         <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", justifyContent: "center" }}>
           <Link href="/book" style={btnPrimary}>📋 Request Quote</Link>
           <Link href="/equipment" style={btnSecondary}>🏗️ Browse Equipment</Link>
-          <a href="tel:09120764728" style={btnSecondary}>📞 Call Us</a>
+          <a href={`tel:${config.phone.replace(/\s/g, "")}`} style={btnSecondary}>📞 Call Us</a>
         </div>
       </section>
 
@@ -135,7 +136,7 @@ export default function HomePage() {
         <p style={{ fontSize: "14px", color: "#666", marginBottom: "24px" }}>Contact us today — we'll get you a quote within 24 hours</p>
         <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
           <Link href="/book" style={btnPrimary}>📋 Request Quote</Link>
-          <a href="https://wa.me/2349120764728" target="_blank" style={{ ...btnSecondary, background: "#25D366", border: "none", color: "white" }}>💬 WhatsApp</a>
+          <a href={`https://wa.me/${config.whatsapp}`} target="_blank" style={{ ...btnSecondary, background: "#25D366", border: "none", color: "white" }}>💬 WhatsApp</a>
         </div>
       </section>
 

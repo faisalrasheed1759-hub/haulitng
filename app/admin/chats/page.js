@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { config } from "@/lib/config";
 
 export default function AdminChats() {
   const [chats, setChats] = useState([]);
@@ -7,19 +8,25 @@ export default function AdminChats() {
   const [messages, setMessages] = useState([]);
   const [reply, setReply] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const bottomRef = useRef(null);
   const notifRef = useRef(null);
 
   useEffect(() => {
     fetch("/api/admin/chats")
       .then((r) => r.json())
-      .then((d) => { setChats(d.chats || []); setLoading(false); });
+      .then((d) => { setChats(d.chats || []); setLoading(false); })
+      .catch(() => { setError("Failed to load conversations"); setLoading(false); });
   }, []);
 
   const loadMessages = useCallback(async (sessionId) => {
-    const res = await fetch(`/api/chat/messages?sessionId=${sessionId}`);
-    const data = await res.json();
-    setMessages(data.messages || []);
+    try {
+      const res = await fetch(`/api/chat/messages?sessionId=${sessionId}`);
+      const data = await res.json();
+      setMessages(data.messages || []);
+    } catch {
+      setError("Failed to load messages");
+    }
   }, []);
 
   useEffect(() => {
@@ -47,18 +54,29 @@ export default function AdminChats() {
       });
       setReply("");
       loadMessages(selected);
-    } catch {}
+    } catch {
+      setError("Failed to send reply");
+    }
   };
 
   const wh = (text) => {
     const msg = encodeURIComponent(`Hi HaulitNG! I have a question: ${text}`);
-    window.open(`https://wa.me/2348031234567?text=${msg}`, "_blank");
+    window.open(`https://wa.me/${config.whatsapp}?text=${msg}`, "_blank");
   };
 
   if (loading) {
     return (
       <div style={{ padding: "24px", textAlign: "center", color: "#888" }}>
         Loading conversations...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ padding: "24px", textAlign: "center", color: "#b91c1c" }}>
+        {error}
+        <button onClick={() => { setError(null); setLoading(true); fetch("/api/admin/chats").then((r) => r.json()).then((d) => { setChats(d.chats || []); setLoading(false); }).catch(() => { setError("Failed to load conversations"); setLoading(false); }); }} style={{ display: "block", margin: "12px auto 0", padding: "8px 16px", background: "#2c3e50", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "13px" }}>Retry</button>
       </div>
     );
   }

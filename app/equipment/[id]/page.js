@@ -1,3 +1,5 @@
+"use client";
+import { useState } from "react";
 import { getEquipmentItem } from "@/lib/equipment";
 import Link from "next/link";
 
@@ -7,6 +9,7 @@ const formatPrice = (p) => "₦" + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
 
 export default function EquipmentDetail({ params }) {
   const item = getEquipmentItem(params.id);
+  const [submitted, setSubmitted] = useState(false);
 
   if (!item) {
     return (
@@ -116,23 +119,29 @@ export default function EquipmentDetail({ params }) {
             <h3 style={{ margin: "0 0 12px", fontSize: "16px" }}>
               {(item.mode === "lease" || item.mode === "both") ? "📅 Enquire to Buy or Lease" : "📩 Enquire"}
             </h3>
-            <form action="/api/inquiry" method="POST" style={{ display: "grid", gap: "10px" }}>
-              <input type="hidden" name="equipmentId" value={item.id} />
-              <input placeholder="Your full name" name="name" required style={inputStyle} />
-              <input placeholder="Phone number" name="phone" required style={inputStyle} />
-              <select name="interest" style={inputStyle} defaultValue="">
-                <option value="" disabled>I&apos;m interested in...</option>
-                <option value="purchase">Purchasing</option>
-                {(item.mode === "lease" || item.mode === "both") && <option value="lease">Leasing / Rent</option>}
-                {(item.mode === "both") && <option value="both">Both — explore options</option>}
-                <option value="transport">Only need transport</option>
-              </select>
-              <textarea placeholder="Message" name="message" rows="2" style={{ ...inputStyle, resize: "vertical" }}></textarea>
-              <button type="submit" style={{
-                padding: "12px", background: "#2c3e50", color: "white", border: "none",
-                borderRadius: "8px", fontSize: "14px", fontWeight: 600, cursor: "pointer",
-              }}>Send enquiry</button>
-            </form>
+            {submitted ? (
+              <div style={{ textAlign: "center", padding: "12px", color: "#166534", fontWeight: 600 }}>
+                ✅ Enquiry submitted! We'll contact you shortly.
+              </div>
+            ) : (
+              <form onSubmit={async (e) => { e.preventDefault(); const fd = new FormData(e.target); await fetch("/api/inquiry", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(Object.fromEntries(fd)) }); setSubmitted(true); }} style={{ display: "grid", gap: "10px" }}>
+                <input type="hidden" name="equipmentId" value={item.id} />
+                <input placeholder="Your full name" name="name" required style={inputStyle} />
+                <input placeholder="Phone number" name="phone" required style={inputStyle} />
+                <select name="interest" style={inputStyle} defaultValue="">
+                  <option value="" disabled>I&apos;m interested in...</option>
+                  <option value="purchase">Purchasing</option>
+                  {(item.mode === "lease" || item.mode === "both") && <option value="lease">Leasing / Rent</option>}
+                  {(item.mode === "both") && <option value="both">Both — explore options</option>}
+                  <option value="transport">Only need transport</option>
+                </select>
+                <textarea placeholder="Message" name="message" rows="2" style={{ ...inputStyle, resize: "vertical" }}></textarea>
+                <button type="submit" style={{
+                  padding: "12px", background: "#2c3e50", color: "white", border: "none",
+                  borderRadius: "8px", fontSize: "14px", fontWeight: 600, cursor: "pointer",
+                }}>Send enquiry</button>
+              </form>
+            )}
           </div>
         </div>
       </div>

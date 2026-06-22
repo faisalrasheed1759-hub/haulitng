@@ -20,6 +20,6 @@ export async function POST(request) {
     const updated = updateTruckLocation(id, lat, lng);
     return Response.json({ truck: updated, message: "Location updated" });
   } catch (e) {
-    return Response.json({ error: e.message }, { status: 500 });
+    console.error(e); return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }

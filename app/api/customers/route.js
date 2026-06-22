@@ -9,6 +9,6 @@ export async function POST(request) {
     addCustomer(name, phone, address);
     return Response.json({ message: "Customer added" }, { status: 201 });
   } catch (e) {
-    return Response.json({ error: e.message }, { status: 500 });
+    console.error(e); return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }

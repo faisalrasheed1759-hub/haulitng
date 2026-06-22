@@ -1,23 +1,26 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import { config } from "@/lib/config";
 
 export default function PaymentPage() {
   const params = useParams();
   const ref = params?.id;
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
 
   useEffect(() => {
     if (!ref) return;
     fetch(`/api/payment?ref=${ref.toUpperCase()}`)
       .then((r) => r.json())
       .then((d) => { setData(d); setLoading(false); })
-      .catch(() => setLoading(false));
+      .catch(() => { setFetchError(true); setLoading(false); });
   }, [ref]);
 
   if (loading) return <div style={{ padding: 40, textAlign: "center", color: "#888" }}>Loading...</div>;
-  if (!data || !data.booking) return <div style={{ padding: 40, textAlign: "center" }}><h2>Not found</h2></div>;
+  if (fetchError) return <div style={{ padding: 40, textAlign: "center" }}><h2>Server error</h2><p style={{ color: "#666" }}>Could not load invoice data. Please try again later.</p></div>;
+  if (!data || !data.booking) return <div style={{ padding: 40, textAlign: "center" }}><h2>Not found</h2><p style={{ color: "#666" }}>No booking found with this reference number.</p></div>;
 
   const { booking, payments, balance } = data;
   const depositPaid = payments?.filter((p) => p.type === "deposit" && p.status === "confirmed").reduce((s, p) => s + p.amount, 0) || 0;
@@ -112,14 +115,14 @@ export default function PaymentPage() {
       <div style={{ background: "#fef3c7", borderRadius: "12px", padding: "20px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
         <h3 style={{ margin: "0 0 12px", fontSize: "16px" }}>🏦 Bank Transfer Details</h3>
         <p style={{ fontSize: "13px", color: "#92400e", margin: "0 0 12px" }}>
-          Transfer to the account below and send confirmation to <strong>0912 076 4728</strong> (WhatsApp).
+          Transfer to the account below and send confirmation to <strong>{config.phone}</strong> (WhatsApp).
           We'll confirm your payment within 1 hour.
         </p>
         <div style={{ background: "white", borderRadius: "8px", padding: "16px", fontSize: "14px" }}>
           <div style={{ display: "grid", gap: "6px" }}>
-            <div><strong>Bank:</strong> GTBank</div>
-            <div><strong>Account Name:</strong> HaulitNG Logistics</div>
-            <div><strong>Account Number:</strong> 0123 456 7890</div>
+            <div><strong>Bank:</strong> {config.bank.name}</div>
+            <div><strong>Account Name:</strong> {config.bank.accountName}</div>
+            <div><strong>Account Number:</strong> {config.bank.accountNumber}</div>
             <hr style={{ border: "none", borderTop: "1px solid #eee", margin: "8px 0" }} />
             <div style={{ fontSize: "12px", color: "#888" }}>
               <strong>Reference:</strong> Use your booking code <strong>{booking.reference}</strong> as payment description
@@ -127,7 +130,7 @@ export default function PaymentPage() {
           </div>
         </div>
         <div style={{ marginTop: "12px", display: "flex", gap: "8px" }}>
-          <a href={`https://wa.me/2349120764728?text=I%20have%20paid%20for%20${booking.reference}`}
+          <a href={`https://wa.me/${config.whatsapp}?text=I%20have%20paid%20for%20${booking.reference}`}
             target="_blank"
             style={{
               flex: 1, textAlign: "center", padding: "12px", background: "#25D366", color: "white",

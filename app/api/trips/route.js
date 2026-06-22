@@ -28,6 +28,6 @@ export async function POST(request) {
     const trip = createTrip(truckId, customerName, destination, estimatedDelivery);
     return Response.json({ trip, message: "Trip created" }, { status: 201 });
   } catch (e) {
-    return Response.json({ error: e.message }, { status: 500 });
+    console.error(e); return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }

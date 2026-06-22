@@ -10,6 +10,6 @@ export async function POST(request) {
     const inquiry = addInquiry({ equipmentId, name, phone, message });
     return Response.json({ inquiry, message: "Inquiry submitted" }, { status: 201 });
   } catch (e) {
-    return Response.json({ error: e.message }, { status: 500 });
+    console.error(e); return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }
