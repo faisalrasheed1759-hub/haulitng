@@ -14,10 +14,7 @@ const navLink = { color: "#a0aec0", textDecoration: "none", fontSize: "14px", fo
 const links = [
   { href: "/equipment", label: "Equipment" },
   { href: "/book", label: "Book Transport" },
-  { href: "/track/HLT-0001", label: "Track" },
-  { href: "/dashboard", label: "Fleet" },
-  { href: "/admin/payments", label: "Payments" },
-  { href: "/admin/chats", label: "Chat" },
+  { href: "/track", label: "Track" },
 ];
 
 export default function Navbar() {

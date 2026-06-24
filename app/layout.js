@@ -36,12 +36,15 @@ export default function RootLayout({ children }) {
         <Navbar />
         <main id="main-content">{children}</main>
         <footer style={{
-          textAlign: "center", padding: "20px", fontSize: "13px", color: "#888",
+          textAlign: "center", padding: "20px", fontSize: "13px",
           background: "#1a1a2e", color: "#4a5568",
         }}>
           <p style={{ margin: "4px 0" }}>HaulitNG — Port Harcourt • Onne • Nationwide</p>
           <p style={{ margin: "4px 0", fontSize: "12px" }}>Heavy equipment sales, leasing, and haulage logistics across Nigeria</p>
           <p style={{ margin: "4px 0", fontSize: "11px" }}>Contact: {config.phone} | {config.email}</p>
+          <p style={{ margin: "8px 0 0", fontSize: "12px" }}>
+            <a href="/privacy" style={{ color: "#718096", textDecoration: "underline" }}>Privacy Policy</a>
+          </p>
         </footer>
         <ChatWidget />
       </body>

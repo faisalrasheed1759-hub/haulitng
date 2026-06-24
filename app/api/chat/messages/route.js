@@ -17,13 +17,18 @@ export async function POST(request) {
 }
 
 export async function GET(request) {
-  const { searchParams } = new URL(request.url);
-  const sessionId = searchParams.get("sessionId");
-  const since = searchParams.get("since");
-  if (!sessionId) {
-    return Response.json({ error: "Missing sessionId" }, { status: 400 });
+  try {
+    const { searchParams } = new URL(request.url);
+    const sessionId = searchParams.get("sessionId");
+    const since = searchParams.get("since");
+    if (!sessionId) {
+      return Response.json({ error: "Missing sessionId" }, { status: 400 });
+    }
+    const { getMessages } = await import("@/lib/chat");
+    const messages = getMessages(sessionId, since);
+    return Response.json({ messages });
+  } catch (e) {
+    console.error(e);
+    return Response.json({ error: "Internal server error" }, { status: 500 });
   }
-  const { getMessages } = await import("@/lib/chat");
-  const messages = getMessages(sessionId, since);
-  return Response.json({ messages });
 }
