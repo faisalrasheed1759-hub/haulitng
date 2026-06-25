@@ -30,7 +30,7 @@ export default function EquipmentDetail({ params }) {
       </div>
 
       <div style={{ background: "white", borderRadius: "12px", overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}>
-        <EquipmentImage category={item.category} image={item.image} height={240} fontSize="96px" />
+        <EquipmentImage category={item.category} image={item.images?.[0]} height={240} fontSize="96px" />
 
         <div style={{ padding: "24px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "16px", flexWrap: "wrap", gap: "12px" }}>

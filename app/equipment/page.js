@@ -47,7 +47,7 @@ export default function EquipmentPage({ searchParams }) {
               background: "white", borderRadius: "12px", overflow: "hidden",
               boxShadow: "0 1px 3px rgba(0,0,0,0.1)", transition: "box-shadow 0.2s", cursor: "pointer",
             }}>
-              <EquipmentImage category={item.category} image={item.image} height={120} fontSize="48px" />
+              <EquipmentImage category={item.category} image={item.images?.[0]} height={120} fontSize="48px" />
               <div style={{ padding: "14px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "6px" }}>
                   <div>
