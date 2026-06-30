@@ -10,7 +10,7 @@ export async function POST(request) {
     const inquiry = addInquiry({ equipmentId, name, phone, message });
     import("@/lib/notifications").then(({ notifyInquiry }) => {
       notifyInquiry(inquiry);
-    });
+    }).catch((e) => console.error("notifyInquiry failed:", e));
     return Response.json({ inquiry, message: "Inquiry submitted" }, { status: 201 });
   } catch (e) {
     console.error(e); return Response.json({ error: "Internal server error" }, { status: 500 });

@@ -33,9 +33,11 @@ export default function ChatWidget() {
 
   useEffect(() => { scrollBottom(); }, [messages]);
 
+  const latestRef = useRef(null);
+
   const fetchNew = useCallback(async () => {
     if (!sessionId) return;
-    const since = messages.length > 0 ? messages[messages.length - 1].timestamp : null;
+    const since = latestRef.current;
     try {
       const url = `/api/chat/messages?sessionId=${sessionId}` + (since ? `&since=${encodeURIComponent(since)}` : "");
       const res = await fetch(url);
@@ -44,11 +46,15 @@ export default function ChatWidget() {
         setMessages((prev) => {
           const existingIds = new Set(prev.map((m) => m.id));
           const newMsgs = data.messages.filter((m) => !existingIds.has(m.id));
-          return newMsgs.length > 0 ? [...prev, ...newMsgs] : prev;
+          if (newMsgs.length > 0) {
+            latestRef.current = newMsgs[newMsgs.length - 1].timestamp;
+            return [...prev, ...newMsgs];
+          }
+          return prev;
         });
       }
     } catch (e) { console.error("Chat fetch error:", e); }
-  }, [sessionId, messages]);
+  }, [sessionId]);
 
   useEffect(() => {
     if (!open || !sessionId) return;

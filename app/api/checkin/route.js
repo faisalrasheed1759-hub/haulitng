@@ -1,5 +1,9 @@
+import { auth } from "@/lib/auth";
+
 export async function POST(request) {
   try {
+    const session = await auth();
+    if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
     const body = await request.json();
     const { tripId, lat, lng, photo, note } = body;
     if (!tripId || lat === undefined || lng === undefined) {

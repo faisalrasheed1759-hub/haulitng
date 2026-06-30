@@ -1,3 +1,6 @@
+"use client";
+import { useState } from "react";
+
 const categoryGradients = {
   excavator: { gradient: "linear-gradient(135deg, #e67e22, #f39c12)", label: "Excavator" },
   crane: { gradient: "linear-gradient(135deg, #2980b9, #3498db)", label: "Crane" },
@@ -34,11 +37,12 @@ const icons = {
 
 export default function EquipmentImage({ category, image, height = 180, fontSize = "72px" }) {
   const info = categoryGradients[category] || categoryGradients.excavator;
+  const [imgError, setImgError] = useState(false);
 
-  if (image) {
+  if (image && !imgError) {
     return (
       <div style={{ height, overflow: "hidden", background: "#ddd" }}>
-        <img src={image} alt={info.label} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <img src={image} alt={info.label} onError={() => setImgError(true)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
       </div>
     );
   }

@@ -77,7 +77,7 @@ export async function POST(req) {
         });
         import("@/lib/notifications").then(({ notifyDepositConfirmed }) => {
           notifyDepositConfirmed(getBooking(bookingRef), payment);
-        });
+        }).catch((e) => console.error("notifyDepositConfirmed failed:", e));
       } else if (type === "final") {
         updateBooking(bookingRef, { paymentStatus: "paid_in_full", status: "completed" });
         updateBalance(bookingRef, {
@@ -88,7 +88,7 @@ export async function POST(req) {
         });
         import("@/lib/notifications").then(({ notifyFinalConfirmed }) => {
           notifyFinalConfirmed(getBooking(bookingRef), payment);
-        });
+        }).catch((e) => console.error("notifyFinalConfirmed failed:", e));
       }
 
       return Response.json({ payment, booking: getBooking(bookingRef) });
@@ -105,7 +105,7 @@ export async function POST(req) {
       updateBalance(bookingRef, { totalAmount: quoteAmount, depositAmount: deposit, finalAmount: final, balanceOwed: final, status: "quoted" });
       import("@/lib/notifications").then(({ notifyQuoteSet }) => {
         notifyQuoteSet(getBooking(bookingRef));
-      });
+      }).catch((e) => console.error("notifyQuoteSet failed:", e));
       return Response.json({ booking: getBooking(bookingRef) });
     }
 

@@ -15,6 +15,8 @@ export async function GET() {
 
 export async function POST(request) {
   try {
+    const authorized = await requireAdmin();
+    if (!authorized) return Response.json({ error: "Unauthorized" }, { status: 401 });
     const body = await request.json();
     const { id, lat, lng } = body;
     if (!id || lat === undefined || lng === undefined) {

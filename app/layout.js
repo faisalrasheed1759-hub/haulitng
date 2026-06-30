@@ -1,6 +1,8 @@
-import ChatWidget from "@/components/ChatWidget";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import { config } from "@/lib/config";
+
+const ChatWidget = dynamic(() => import("@/components/ChatWidget"));
 
 export const metadata = {
   metadataBase: new URL('https://haulit.ng'),

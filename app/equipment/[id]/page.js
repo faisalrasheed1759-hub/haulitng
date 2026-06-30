@@ -2,12 +2,14 @@
 import { useState } from "react";
 import { getEquipmentItem } from "@/lib/equipment";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import EquipmentImage from "@/components/EquipmentImage";
 
 const formatPrice = (p) => "₦" + p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-export default function EquipmentDetail({ params }) {
-  const item = getEquipmentItem(params.id);
+export default function EquipmentDetail() {
+  const { id } = useParams();
+  const item = getEquipmentItem(id);
   const [submitted, setSubmitted] = useState(false);
 
   if (!item) {
