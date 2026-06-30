@@ -3,9 +3,16 @@ import { requireAdmin } from "@/lib/api-auth";
 
 export async function GET(request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+    if (id) {
+      const { getTrip } = await import("@/lib/store");
+      const trip = getTrip(id);
+      if (!trip) return Response.json({ error: "Not found" }, { status: 404 });
+      return Response.json({ trip });
+    }
     const authorized = await requireAdmin();
     if (!authorized) return Response.json({ error: "Unauthorized" }, { status: 401 });
-    const { searchParams } = new URL(request.url);
     const customer = searchParams.get("customer");
     const allTrips = getTrips();
     if (customer) {

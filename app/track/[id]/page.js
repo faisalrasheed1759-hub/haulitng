@@ -3,26 +3,16 @@ import React from "react";
 import { useParams } from "next/navigation";
 
 async function getTripData(tripId) {
-  let hasError = false;
   try {
-    const res = await fetch(`/api/trips`);
-    if (!res.ok) throw new Error("fetch failed");
-    const data = await res.json();
-    const trip = data.trips.find((t) => t.id === tripId.toUpperCase());
-    if (trip) return { trip, error: null };
-  } catch {
-    hasError = true;
-  }
-  try {
-    const res = await fetch(`/api/book?ref=${tripId.toUpperCase()}`);
+    const res = await fetch(`/api/trips?id=${encodeURIComponent(tripId.toUpperCase())}`);
     if (res.ok) {
       const data = await res.json();
-      if (data.booking) return { trip: { ...data.booking, id: data.booking.reference, isBooking: true }, error: null };
+      if (data.trip) return { trip: data.trip, error: null };
     }
+    return { trip: null, error: "not_found" };
   } catch {
-    hasError = true;
+    return { trip: null, error: "server_error" };
   }
-  return { trip: null, error: hasError ? "server_error" : "not_found" };
 }
 
 export default function TrackPage({ params }) {
